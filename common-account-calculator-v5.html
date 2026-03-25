@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stathis & Anastasia Common Account Calculator</title>
+  <style>
+    :root {
+      --bg: #f8f7ff;
+      --card: rgba(255,255,255,0.9);
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e8e7f3;
+      --accent: #6d5efc;
+      --accent-soft: #ece9ff;
+      --good: #166534;
+      --good-bg: #dcfce7;
+      --warn: #9a3412;
+      --warn-bg: #ffedd5;
+      --danger: #991b1b;
+      --danger-bg: #fee2e2;
+      --shadow: 0 16px 40px rgba(71, 85, 105, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #f3e8ff 0%, transparent 35%),
+        radial-gradient(circle at top right, #dbeafe 0%, transparent 35%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 26px;
+      padding: 30px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(245,247,255,0.92) 100%);
+      align-items: center;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 14px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.55;
+      max-width: 60ch;
+    }
+
+    .names {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .name-pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      font-weight: 700;
+      color: var(--text);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    .hero-photo {
+      position: relative;
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-frame {
+      position: relative;
+      width: min(100%, 360px);
+      aspect-ratio: 4 / 3;
+      border-radius: 28px;
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(109,94,252,0.18), rgba(59,130,246,0.14));
+      box-shadow: 0 18px 45px rgba(109,94,252,0.18);
+      transform: rotate(1.3deg);
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 22px;
+      display: block;
+      background: #eef2ff;
+    }
+
+    .photo-badge {
+      position: absolute;
+      right: -10px;
+      bottom: 18px;
+      padding: 10px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .content {
+      padding: 26px 30px 30px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .transactions {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .tx {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 10px 25px rgba(148, 163, 184, 0.08);
+    }
+
+    .tx-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .tx-title {
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 0.94rem;
+    }
+
+    select, input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      background: white;
+      color: var(--text);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    select:focus, input:focus {
+      outline: 3px solid var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, opacity 0.14s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #6d5efc, #4f46e5);
+      color: white;
+      box-shadow: 0 12px 24px rgba(79,70,229,0.25);
+    }
+
+    .secondary {
+      background: #f3f4f6;
+      color: var(--text);
+    }
+
+    .danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .panels {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .result, .rules, .breakdown {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 10px 25px rgba(148, 163, 184, 0.08);
+    }
+
+    .result-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .big {
+      font-size: 1.22rem;
+      font-weight: 900;
+      line-height: 1.45;
+    }
+
+    .note {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      font-size: 0.88rem;
+    }
+
+    .a { background: var(--warn-bg); color: var(--warn); }
+    .b { background: var(--good-bg); color: var(--good); }
+
+    .breakdown-list {
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .break-item {
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+      line-height: 1.55;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .panels {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-photo {
+        order: -1;
+        min-height: auto;
+      }
+
+      .photo-frame {
+        width: min(100%, 420px);
+        transform: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+      body { padding: 14px; }
+      .hero, .content { padding-left: 18px; padding-right: 18px; }
+      h1 { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">💜 Couple finance helper</div>
+          <h1>Stathis &amp; Anastasia<br>Common Account Calculator</h1>
+          <p class="subtitle">Add one or more transactions, then get one combined final result based on your two custom settlement options. Built to make the boring accounting part a little more fun.</p>
+          <div class="names">
+            <div class="name-pill">👤 Stathis = me</div>
+            <div class="name-pill">👤 Anastasia = wife</div>
+          </div>
+        </div>
+        <div class="hero-photo">
+          <div class="photo-frame">
+            <img src="our_photo_for_accounting.jpg" alt="Stathis and Anastasia" />
+            <div class="photo-badge">💙 Team budget</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="toolbar">
+          <button class="primary" id="addBtn">Add transaction</button>
+          <button class="secondary" id="calcBtn">Calculate combined result</button>
+          <button class="secondary" id="resetBtn">Reset all</button>
+        </div>
+
+        <div class="transactions" id="transactions"></div>
+
+        <div class="panels">
+          <div class="result" id="result">
+            <div class="result-title">Combined result</div>
+            <div class="big">Add one or more transactions, then click Calculate combined result.</div>
+            <div class="note">The page combines all entries into one final instruction.</div>
+          </div>
+
+          <div class="breakdown" id="breakdown">
+            <div class="result-title">Breakdown</div>
+            <div class="note">Each transaction will also show how it contributes to the final answer.</div>
+          </div>
+        </div>
+
+        <div class="rules">
+          <strong>Your current rules used by this calculator</strong>
+          <ul>
+            <li><strong>Option a:</strong> You send Anastasia money and she sends it all to the common account.</li>
+            <li><strong>Option b:</strong> Anastasia sends money to the common account.</li>
+            <li><strong>Netting fix:</strong> opposite transactions now cancel each other properly instead of always being added.</li>
+            <li>If Anastasia paid for common, it adds the amount toward option a.</li>
+            <li>If Stathis paid for common, it subtracts the amount and pushes toward option b.</li>
+            <li>If common paid for Stathis, it adds the amount toward option a.</li>
+            <li>If common paid for Anastasia, it subtracts the amount and pushes toward option b.</li>
+            <li>If Stathis paid for Anastasia personally, it subtracts <strong>double</strong> the amount.</li>
+            <li>If Anastasia paid for Stathis personally, it adds <strong>double</strong> the amount.</li>
+          </ul>
+          <div class="footer">Note: combinations like <em>Stathis paid for Stathis</em>, <em>Anastasia paid for Anastasia</em>, or <em>common paid for common</em> are treated as no transfer needed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <template id="txTemplate">
+    <div class="tx">
+      <div class="tx-head">
+        <div class="tx-title"></div>
+        <button class="danger removeBtn" type="button">Remove</button>
+      </div>
+      <div class="grid">
+        <div>
+          <label>Paid by</label>
+          <select class="paid">
+            <option value="me">Stathis</option>
+            <option value="wife">Anastasia</option>
+            <option value="common">Common account</option>
+          </select>
+        </div>
+        <div>
+          <label>For</label>
+          <select class="forWhom">
+            <option value="common">Common</option>
+            <option value="me">Stathis</option>
+            <option value="wife">Anastasia</option>
+          </select>
+        </div>
+        <div>
+          <label>Amount (€)</label>
+          <input class="amount" type="number" min="0" step="0.01" placeholder="e.g. 100" />
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const transactionsEl = document.getElementById('transactions');
+    const resultEl = document.getElementById('result');
+    const breakdownEl = document.getElementById('breakdown');
+    const txTemplate = document.getElementById('txTemplate');
+
+    function euro(value) {
+      return new Intl.NumberFormat('el-GR', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
+
+    function renumber() {
+      [...transactionsEl.querySelectorAll('.tx')].forEach((tx, index) => {
+        tx.querySelector('.tx-title').textContent = `Transaction ${index + 1}`;
+      });
+    }
+
+    function addTransaction(defaults = { paid: 'me', target: 'common', amount: '' }) {
+      const node = txTemplate.content.firstElementChild.cloneNode(true);
+      node.querySelector('.paid').value = defaults.paid;
+      node.querySelector('.forWhom').value = defaults.target;
+      node.querySelector('.amount').value = defaults.amount;
+
+      node.querySelector('.removeBtn').addEventListener('click', () => {
+        node.remove();
+        if (!transactionsEl.children.length) addTransaction();
+        renumber();
+        calculate();
+      });
+
+      node.querySelectorAll('select, input').forEach(el => {
+        el.addEventListener('change', calculate);
+        el.addEventListener('input', calculate);
+      });
+
+      transactionsEl.appendChild(node);
+      renumber();
+    }
+
+    function evaluateTransaction(paid, target, amount) {
+      if (!Number.isFinite(amount) || amount <= 0) {
+        return { valid: false, netContribution: 0, description: 'Ignored: invalid amount.' };
+      }
+
+      if (paid === 'wife' && target === 'common') {
+        return {
+          valid: true,
+          netContribution: amount,
+          description: `+${euro(amount)} to the final net amount: Anastasia paid for common, so this pushes the result toward option a.`
+        };
+      }
+
+      if (paid === 'me' && target === 'common') {
+        return {
+          valid: true,
+          netContribution: -amount,
+          description: `${euro(-amount)} to the final net amount: Stathis paid for common, so this pushes the result toward option b.`
+        };
+      }
+
+      if (paid === 'common' && target === 'me') {
+        return {
+          valid: true,
+          netContribution: amount,
+          description: `+${euro(amount)} to the final net amount: common paid for Stathis, so this pushes the result toward option a.`
+        };
+      }
+
+      if (paid === 'common' && target === 'wife') {
+        return {
+          valid: true,
+          netContribution: -amount,
+          description: `${euro(-amount)} to the final net amount: common paid for Anastasia, so this pushes the result toward option b.`
+        };
+      }
+
+      if (paid === 'me' && target === 'wife') {
+        return {
+          valid: true,
+          netContribution: -2 * amount,
+          description: `${euro(-2 * amount)} to the final net amount: Stathis paid Anastasia personally, so this lowers the total by double the amount.`
+        };
+      }
+
+      if (paid === 'wife' && target === 'me') {
+        return {
+          valid: true,
+          netContribution: 2 * amount,
+          description: `+${euro(2 * amount)} to the final net amount: Anastasia paid Stathis personally, so this raises the total by double the amount.`
+        };
+      }
+
+      return {
+        valid: true,
+        netContribution: 0,
+        description: 'No transfer needed under the current rules.'
+      };
+    }
+
+    function setCombinedResult(type, title, text) {
+      const badgeClass = type === 'a' ? 'a' : type === 'b' ? 'b' : '';
+      const badgeText = type === 'a' ? 'Option a' : type === 'b' ? 'Option b' : 'Info';
+      resultEl.innerHTML = `
+        <div class="result-title">Combined result</div>
+        <div class="badge ${badgeClass}">${badgeText}</div>
+        <div class="big">${title}</div>
+        <div class="note">${text}</div>
+      `;
+    }
+
+    function calculate() {
+      const entries = [...transactionsEl.querySelectorAll('.tx')];
+      let netTotal = 0;
+      const breakdownItems = [];
+
+      entries.forEach((tx, index) => {
+        const paid = tx.querySelector('.paid').value;
+        const target = tx.querySelector('.forWhom').value;
+        const amount = Number(tx.querySelector('.amount').value);
+        const evaluated = evaluateTransaction(paid, target, amount);
+
+        netTotal += evaluated.netContribution || 0;
+
+        breakdownItems.push(`
+          <div class="break-item">
+            <strong>Transaction ${index + 1}:</strong> ${evaluated.description}
+          </div>
+        `);
+      });
+
+      breakdownEl.innerHTML = `
+        <div class="result-title">Breakdown</div>
+        <div class="breakdown-list">
+          ${breakdownItems.join('')}
+        </div>
+      `;
+
+      if (netTotal > 0) {
+        setCombinedResult(
+          'a',
+          `Stathis sends Anastasia ${euro(netTotal)} and she sends it to the common account.`,
+          `Positive net amounts lead to option a.<br><br><strong>Final net amount: ${euro(netTotal)}</strong>`
+        );
+        return;
+      }
+
+      if (netTotal < 0) {
+        setCombinedResult(
+          'b',
+          `Anastasia sends ${euro(Math.abs(netTotal))} to the common account.`,
+          `Negative net amounts lead to option b.<br><br><strong>Final net amount: ${euro(netTotal)}</strong>`
+        );
+        return;
+      }
+
+      setCombinedResult(
+        '',
+        'No transfer needed.',
+        'The entered transactions cancel each other out exactly, so the combined result is zero.'
+      );
+    }
+
+    document.getElementById('addBtn').addEventListener('click', () => {
+      addTransaction();
+      calculate();
+    });
+
+    document.getElementById('calcBtn').addEventListener('click', calculate);
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      transactionsEl.innerHTML = '';
+      addTransaction();
+      resultEl.innerHTML = `
+        <div class="result-title">Combined result</div>
+        <div class="big">Add one or more transactions, then click Calculate combined result.</div>
+        <div class="note">The page combines all entries into one final instruction.</div>
+      `;
+      breakdownEl.innerHTML = `
+        <div class="result-title">Breakdown</div>
+        <div class="note">Each transaction will also show how it contributes to the final answer.</div>
+      `;
+    });
+
+    addTransaction({ paid: 'me', target: 'common', amount: '' });
+    calculate();
+  </script>
+</body>
+</html>
